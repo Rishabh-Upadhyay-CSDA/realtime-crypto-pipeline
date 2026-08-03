@@ -1,14 +1,10 @@
 .env
 .env.local
 *.env
-dashboard/.env
-dashboard/.env.local
 __pycache__/
 *.pyc
-.DS_Store
 venv/
 .venv/
-node_modules/
-.next/
 dashboard/node_modules/
-dashboard/.next
+dashboard/.next/
+dashboard/.env.local
