@@ -35,7 +35,7 @@ export default function Dashboard() {
       <div className="max-w-5xl mx-auto space-y-6">
         <header className="flex justify-between items-center border-b border-slate-800 pb-4">
           <div>
-            <h1 className="text-2xl font-bold text-emerald-400">⚡ Real-Time Crypto Telemetry Pipeline</h1>
+            <h1 className="text-2xl font-bold text-emerald-400">Real-Time Crypto Telemetry Pipeline</h1>
             <p className="text-slate-400 text-sm">Live BTC/USDT trades ingested via WebSockets & Neon Postgres</p>
           </div>
           <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold animate-pulse">
