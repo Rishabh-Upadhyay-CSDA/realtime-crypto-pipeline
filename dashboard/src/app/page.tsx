@@ -14,13 +14,14 @@ interface Metric {
 export default function Dashboard() {
   const [data, setData] = useState<Metric[]>([]);
 
-  const fetchMetrics = async () => {
+  const RENDER_BACKEND_URL = 'https://crypto-pipeline-worker.onrender.com';
+  
+  async function updateData() {
     try {
-      const res = await fetch('/api/metrics');
-      const json = await res.json();
-      if (Array.isArray(json)) setData(json);
-    } catch (err) {
-      console.error(err);
+      const res = await fetch(`${RENDER_BACKEND_URL}/api/metrics?limit=30`);
+      const data = await res.json();
+    } catch (e) {
+      console.error("Fetch error:", e);
     }
   };
 
