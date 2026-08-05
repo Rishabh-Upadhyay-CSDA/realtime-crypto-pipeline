@@ -9,7 +9,7 @@ load_dotenv()
 
 REDIS_URL = os.getenv("UPSTASH_REDIS_URL")
 
-BINANCE_WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@trade"
+BINANCE_WS_URL = "wss://stream.binance.us:9443/ws/btcusdt@trade"
 
 async def stream_to_redis():
     print("Connecting to Upstash Redis...")

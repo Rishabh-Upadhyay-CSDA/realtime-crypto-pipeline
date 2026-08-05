@@ -44,7 +44,7 @@ async def save_to_neon(symbol, price, quantity, is_anomaly):
 # 3. WEBSOCKET CONSUMER & ANOMALY ENGINE
 async def stream_binance():
     # Public Binance WebSocket endpoint for BTC/USDT trades
-    url = "wss://stream.binance.com:9443/ws/btcusdt@trade"
+    url = "wss://stream.binance.us:9443/ws/btcusdt@trade"
     
     price_window = []
     window_size = 20  # Rolling window size for anomaly detection

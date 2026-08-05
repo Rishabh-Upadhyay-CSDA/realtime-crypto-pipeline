@@ -27,7 +27,7 @@ def sanitize_url(url_str: str) -> str:
 # Clean the environment URLs inside main.py
 REDIS_URL = sanitize_url(os.getenv("UPSTASH_REDIS_URL"))
 NEON_DB_URL = sanitize_url(os.getenv("NEON_DB_URL"))
-BINANCE_WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@trade"
+BINANCE_WS_URL = "wss://stream.binance.us:9443/ws/btcusdt@trade"
 
 # Z-score state
 price_window = []
