@@ -1,7 +1,5 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useState, useEffect } from 'react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 
 interface Metric {
   id: number;
@@ -19,15 +17,17 @@ export default function Dashboard() {
   async function updateData() {
     try {
       const res = await fetch(`${RENDER_BACKEND_URL}/api/metrics?limit=30`);
-      const data = await res.json();
+      const result: Metric[] = await res.json();
+      // Reversing array so newest metrics appear on the right of the chart
+      setData(result.reverse());
     } catch (e) {
       console.error("Fetch error:", e);
     }
-  };
+  }
 
   useEffect(() => {
-    fetchMetrics();
-    const interval = setInterval(fetchMetrics, 2000); // Auto-refresh every 2s
+    updateData(); // Call updated function name
+    const interval = setInterval(updateData, 2000); // Auto-refresh every 2s
     return () => clearInterval(interval);
   }, []);
 
