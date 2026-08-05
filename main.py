@@ -60,7 +60,7 @@ async def producer_task():
                 print("[Producer] Connected to Coinbase WS!")
 
                 async for message in ws:
-                    trade = json.loads(message)
+                    data = json.loads(message)
                     if data.get("type") == "ticker" and "price" in data:
                         payload = {
                             "symbol": data.get("product_id"),
