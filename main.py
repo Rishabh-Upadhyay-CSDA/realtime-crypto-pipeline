@@ -27,7 +27,6 @@ def sanitize_url(url_str: str) -> str:
 # Clean the environment URLs inside main.py
 REDIS_URL = sanitize_url(os.getenv("UPSTASH_REDIS_URL"))
 NEON_DB_URL = sanitize_url(os.getenv("NEON_DB_URL"))
-BINANCE_WS_URL = "wss://stream.binance.us:9443/ws/btcusdt@trade"
 
 # Z-score state
 price_window = []
@@ -44,25 +43,34 @@ def calculate_zscore(price: float) -> float:
     return float((price - mean) / std) if std > 0 else 0.0
 
 async def producer_task():
-    """Reads from Binance WebSocket and publishes to Upstash Redis Stream."""
-    print("[Producer] Connecting to Upstash Redis & Binance WS...")
-    redis = Redis.from_url(REDIS_URL, decode_responses=True)
+    print("[Producer] Connecting to Coinbase WS...")
+
+    url = "wss://ws-feed.exchange.coinbase.com"
+    subscribe_message = {
+        "type": "subscribe",
+        "product_ids": "["BTC-USD"],
+        "channels": ["ticker"]
+    }
     
     while True:
         try:
-            async with websockets.connect(BINANCE_WS_URL) as ws:
-                print("[Producer] Ingestion loop active...")
+            redis = Redis.from_url(REDIS_URL, decode_responses=True)
+            async with websockets.connect(url) as ws:
+                await ws.send(json.dumps(subscribe_message))
+                print("[Producer] Connected to Coinbase WS!")
+
                 async for message in ws:
                     trade = json.loads(message)
-                    payload = {
-                        "symbol": str(trade.get("s")),
-                        "price": str(trade.get("p", 0)),
-                        "quantity": str(trade.get("q", 0)),
-                        "timestamp": str(trade.get("T"))
-                    }
-                    await redis.xadd("crypto-trades", payload, maxlen=1000, approximate=True)
+                    if data.get("type") == "ticker" and "price" in data:
+                        payload = {
+                            "symbol": data.get("product_id"),
+                            "price": str(data.get("price")),
+                            "quantity": str(data.get("last_size", 0)),
+                            "timestamp": str(data.get("time"))
+                        }
+                        await redis.xadd("crypto-trades", payload, maxlen=1000, approximate=True)
         except Exception as e:
-            print(f"[Producer] Connection error: {e}. Reconnecting in 5s...")
+            print(f"[Producer Error]: {e}")
             await asyncio.sleep(5)
 
 async def consumer_task():
