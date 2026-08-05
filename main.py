@@ -48,7 +48,7 @@ async def producer_task():
     url = "wss://ws-feed.exchange.coinbase.com"
     subscribe_message = {
         "type": "subscribe",
-        "product_ids": "["BTC-USD"],
+        "product_ids": ["BTC-USD"],
         "channels": ["ticker"]
     }
     
