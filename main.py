@@ -8,12 +8,25 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from redis.asyncio import Redis
 import websockets
+from urllib.parse import urlparse, quote_plus, urlunparse
 
 load_dotenv()
 
-# Environment Variables
-REDIS_URL = os.getenv("UPSTASH_REDIS_URL")
-NEON_DB_URL = os.getenv("NEON_DB_URL")
+def sanitize_url(url_str: str) -> str:
+    if not url_str: return url_str
+    parsed = urlparse(url_str)
+    if parsed.password:
+        encoded_password = quote_plus(parsed.password)
+        # Reconstruct userinfo safely
+        netloc = f"{parsed.username}:{encoded_password}@{parsed.hostname}"
+        if parsed.port:
+            netloc += f":{parsed.port}"
+        return urlunparse((parsed.scheme, netloc, parsed.path, parsed.params, parsed.query, parsed.fragment))
+    return url_str
+
+# Clean the environment URLs inside main.py
+REDIS_URL = sanitize_url(os.getenv("UPSTASH_REDIS_URL"))
+NEON_DB_URL = sanitize_url(os.getenv("NEON_DB_URL"))
 BINANCE_WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@trade"
 
 # Z-score state

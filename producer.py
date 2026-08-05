@@ -5,6 +5,8 @@ import websockets
 from redis.asyncio import Redis
 from dotenv import load_dotenv
 
+load_dotenv()
+
 REDIS_URL = os.getenv("UPSTASH_REDIS_URL")
 
 BINANCE_WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@trade"
