@@ -114,7 +114,7 @@ export default function Dashboard() {
         <div className="p-4 rounded-xl bg-gradient-to-r from-blue-900/30 via-slate-800/40 to-purple-900/30 border border-slate-700/50 backdrop-blur-sm text-sm text-slate-300">
           <p className="font-semibold text-slate-200 mb-1">💡 What am I looking at?</p>
           <p className="text-slate-400 text-xs leading-relaxed">
-            This dashboard ingests live <strong className="text-slate-200">BTC-USD</strong> trades from Coinbase WebSockets, processes them through Upstash Redis & Neon PostgreSQL, and calculates standard deviations ($Z\text{-score}$) over a 50-trade sliding window. Points where <strong className="text-rose-400">$|Z| &gt; 2.5$</strong> are flagged as price anomalies.
+            This dashboard ingests live <strong className="text-slate-200">BTC-USD</strong> trades from Coinbase WebSockets, processes them through Upstash Redis & Neon PostgreSQL, and calculates standard deviations (Z-score) over a 50-trade sliding window. Points where <strong className="text-rose-400">|Z| &gt; 2.5</strong> are flagged as price anomalies.
           </p>
         </div>
 
