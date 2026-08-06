@@ -168,9 +168,9 @@ export default function Dashboard() {
                 <YAxis domain={['auto', 'auto']} stroke="#64748b" tick={{ fill: '#64748b', fontSize: 12 }} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.75rem', color: '#f8fafc' }}
-                  formatter={(value: any, name: string) => [
+                  formatter={(value: any, name: any) => [
                     name === 'price' ? `$${Number(value).toLocaleString()}` : value,
-                    name === 'price' ? 'Price' : name
+                    name === 'price' ? 'Price' : String(name || '')
                   ]}
                 />
                 <Line
