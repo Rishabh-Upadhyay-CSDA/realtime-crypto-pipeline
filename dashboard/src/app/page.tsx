@@ -59,9 +59,33 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    updateData();
-    const interval = setInterval(updateData, 2000);
-    return () => clearInterval(interval);
+    let interval: NodeJS.Timeout;
+
+    const handleFetch = () => {
+      if (!document.hidden) {
+        updateData();
+      }
+    };
+
+    handleFetch();
+
+    interval = setInterval(handleFetch, 11000);
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearInterval(interval);
+      } else {
+        handleFetch();
+        interval = setInterval(handleFetch, 11000);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const renderCustomDot = (props: any) => {
@@ -145,7 +169,7 @@ export default function Dashboard() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h2 className="text-lg font-bold text-slate-100">Live Price & Anomaly Monitor</h2>
-              <p className="text-xs text-slate-400">Red dots highlight anomalous trade events ($|Z| &gt; 2.5$)</p>
+              <p className="text-xs text-slate-400">Red dots highlight anomalous trade events (|Z| &gt; 2.5)</p>
             </div>
             
             <div className="flex items-center gap-4 text-xs">
