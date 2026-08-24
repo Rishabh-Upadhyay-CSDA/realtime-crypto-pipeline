@@ -141,7 +141,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Crypto Telemetry Pipeline Worker", lifespan=lifespan)
 
-app.add_middleware(GzipMiddleware, minimum_size=250)
+app.add_middleware(GZipMiddleware, minimum_size=250)
 
 # Add CORS Middleware for Vercel Frontend
 app.add_middleware(
