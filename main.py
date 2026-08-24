@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.gzip import GzipMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 from redis.asyncio import Redis
 import websockets
 from urllib.parse import urlparse, quote_plus, urlunparse
