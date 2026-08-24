@@ -218,7 +218,7 @@ export default function Dashboard() {
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
                 Real-Time Anomaly Log
               </h2>
-              <p className="text-xs text-slate-400">Recent trades triggered by statistical volatility filter ($|Z| &gt; 2.5$)</p>
+              <p className="text-xs text-slate-400">Recent trades triggered by statistical volatility filter (|Z| &gt; 2.5)</p>
             </div>
             <span className="text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-1 rounded-md">
               {anomalies.length} Captured
