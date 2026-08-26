@@ -82,7 +82,7 @@ Backend (.env / Render Environment):
    ```text
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install fastapi uvicorn websockets redis asyncpg numpy python-dotenv
+   pip install -r requirements.txt
    uvicorn main:app --reload
    ```
 
@@ -100,12 +100,12 @@ Backend (.env / Render Environment):
 ## Database Schema
 
 ```text
-CREATE TABLE IF NOT EXISTS crypto_metrics (
+CREATE TABLE crypto_metrics (
     id SERIAL PRIMARY KEY,
     symbol VARCHAR(20) NOT NULL,
     price NUMERIC NOT NULL,
     quantity NUMERIC NOT NULL,
-    z_score DOUBLE PRECISION DEFAULT 0.0,
+    z_score DOUBLE PRECISION NOT NULL,
     is_anomaly BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
