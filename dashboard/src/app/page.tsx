@@ -59,6 +59,8 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
+    document.title = 'PulseTrade Analytics | Real-Time Crypto Pipeline';
+
     let interval: NodeJS.Timeout;
 
     const handleFetch = () => {

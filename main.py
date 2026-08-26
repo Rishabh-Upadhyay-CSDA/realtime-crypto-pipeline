@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import asyncio
 import asyncpg
 import numpy as np
@@ -33,6 +34,8 @@ NEON_DB_URL = sanitize_url(os.getenv("NEON_DB_URL"))
 price_window = []
 WINDOW_SIZE = 50
 
+last_active_time = time.time()
+
 db_pool: asyncpg.Pool = None
 
 def calculate_zscore(price: float) -> float:
@@ -41,13 +44,13 @@ def calculate_zscore(price: float) -> float:
         price_window.pop(0)
     if len(price_window) < 10:
         return 0.0
-    mean = np.mean(price_window)
-    std = np.std(price_window)
+    mean = float(np.mean(price_window))
+    std = float(np.std(price_window))
     return float((price - mean) / std) if std > 0 else 0.0
 
 async def producer_task():
+    global last_active_time
     print("[Producer] Connecting to Coinbase WS...")
-
     url = "wss://ws-feed.exchange.coinbase.com"
     subscribe_message = {
         "type": "subscribe",
@@ -56,6 +59,11 @@ async def producer_task():
     }
     
     while True:
+        if time.time() - last_active_time > 600:
+            await asyncio.sleep(10)
+            continue
+
+        redis = None
         try:
             redis = Redis.from_url(REDIS_URL, decode_responses=True)
             async with websockets.connect(url) as ws:
@@ -63,6 +71,9 @@ async def producer_task():
                 print("[Producer] Connected to Coinbase WS!")
 
                 async for message in ws:
+                    if time.time() - last_active_time > 600:
+                        break
+
                     data = json.loads(message)
                     if data.get("type") == "ticker" and "price" in data:
                         payload = {
@@ -118,8 +129,8 @@ async def consumer_task():
 
                 await asyncio.sleep(1)
         except Exception as e:
-            print(f"[Consumer Error]: {e}. Retrying in 3s...")
-            await asyncio.sleep(3)
+            print(f"[Consumer Error]: {e}. Retrying in 5s...")
+            await asyncio.sleep(5)
         finally:
             if redis:
                 await redis.aclose()
@@ -128,7 +139,7 @@ async def consumer_task():
 async def lifespan(app: FastAPI):
     global db_pool
     if NEON_DB_URL:
-        db_pool = await asyncpg.create_pool(dsn=NEON_DB_URL, min_size=0, max_size=3)
+        db_pool = await asyncpg.create_pool(dsn=NEON_DB_URL, min_size=0, max_size=5)
 
     producer_job = asyncio.create_task(producer_task())
     consumer_job = asyncio.create_task(consumer_task())
@@ -139,7 +150,7 @@ async def lifespan(app: FastAPI):
     if db_pool:
         await db_pool.close()
 
-app = FastAPI(title="Crypto Telemetry Pipeline Worker", lifespan=lifespan)
+app = FastAPI(title="PulseTrade Analytics Pipeline", lifespan=lifespan)
 
 app.add_middleware(GZipMiddleware, minimum_size=250)
 
@@ -154,11 +165,13 @@ app.add_middleware(
 
 @app.api_route("/", methods=["GET", "HEAD"])
 def health_check():
-    """Health check endpoint for Render and UptimeRobot."""
-    return {"status": "online", "service": "crypto-telemetry-pipeline"}
+    return {"status": "online", "service": "pulsetrade-telemetry-pipeline"}
 
 @app.get("/api/metrics")
 async def get_metrics(response: Response, limit: int = Query(30, ge=1, le=500)):
+    global last_active_time
+    last_active_time = time.time()
+
     if not db_pool:
         return {"error": "Database pool unavaillable"}
 
@@ -178,6 +191,9 @@ async def get_metrics(response: Response, limit: int = Query(30, ge=1, le=500)):
 
 @app.get("/api/anomalies")
 async def get_anomalies(response: Response, limit: int = Query(20, ge=1, le=100)):
+    global last_active_time
+    last_active_time = time.time()
+
     if not db_pool:
         return {"error": "Database pool unavailable"}
 
