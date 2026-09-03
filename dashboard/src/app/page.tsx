@@ -120,7 +120,7 @@ export default function Dashboard() {
               PulseTrade Analytics
             </h1>
             <p className="text-slate-400 text-xs mt-0.5">
-              Real-time WebSocket Ingestion & Statistical Anomaly Stream
+              Real-Time WebSocket Ingestion & Statistical Anomaly Stream
             </p>
           </div>
 
@@ -278,7 +278,7 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div>
             <p className="text-slate-400 font-medium">PulseTrade Analytics © {new Date().getFullYear()}</p>
-            <p className="mt-0.5">Real-Time Data Pipeline Portfolio Project</p>
+            <p className="mt-0.5">This project is open-source and available under the MIT License.</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
